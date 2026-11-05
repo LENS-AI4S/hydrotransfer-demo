@@ -2,81 +2,50 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="HydroTransfer 全球流域参数移植与洪水模拟平台交互演示：流域边界、洪水事件、只读数据立方体、多模态成果与模拟演示。">
-  <meta name="theme-color" content="#103e61">
-  <title>HydroTransfer · 全球流域参数移植与洪水模拟平台</title>
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="cube-viewer.css">
+  <meta name="description" content="HydroTransfer：全球流域地图、只读数据立方体、多来源洪水证据与研究报告。">
+  <meta name="theme-color" content="#ffffff">
+  <title>HydroTransfer · 流域研究平台</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=20261105-ui8"><link rel="stylesheet" href="cube-viewer.css?v=20261105-ui8"><link rel="stylesheet" href="results-redesign.css?v=20261105-ui8"><link rel="stylesheet" href="report-viewer.css?v=20261105-ui8">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="icon-rail" aria-label="快捷导航">
-      <a class="rail-brand" href="#overview" data-view="overview" title="HydroTransfer 首页"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 3C12 12 6 16 6 23a12 12 0 0024 0c0-7-6-11-12-20Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 22c5-6 13 6 19-2M9 27c6-5 12 4 17 0" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></a>
-      <div class="rail-divider"></div>
-      <button class="rail-btn active" data-view="overview" title="全球流域" aria-label="全球流域"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 6.5h14M5 17.5h14"/></svg></button>
-      <button class="rail-btn" data-view="results" title="研究成果" aria-label="研究成果"><svg viewBox="0 0 24 24"><path d="M3 18h18M4 14l4-5 4 4 4-9 4 5M4 4v16"/></svg></button>
-      <button class="rail-btn" data-view="data" title="数据立方体" aria-label="数据立方体"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 4 16 4 16 0V5M4 12v7c0 4 16 4 16 0v-7"/></svg></button>
-      <button class="rail-btn" data-view="workflow" hidden title="数据处理流程" aria-label="数据处理流程"><svg viewBox="0 0 24 24"><path d="M8 5h13M8 12h13M8 19h13"/><circle cx="3" cy="5" r="1.5"/><circle cx="3" cy="12" r="1.5"/><circle cx="3" cy="19" r="1.5"/></svg></button>
-      <button class="rail-btn" data-view="simulation" title="参数移植与模拟" aria-label="参数移植与模拟"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M9 6h9v6m-3-3 3 3 3-3M15 18H6v-6m-3 3 3-3 3 3"/></svg></button>
-      <div class="rail-bottom"><button class="rail-btn" id="aboutBtn" title="演示说明" aria-label="演示说明"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg></button><span class="rail-version">v0.7</span></div>
-    </aside>
-    <header class="topbar">
-      <div class="brand"><div class="brand-name">Hydro<span>Transfer</span><span class="brand-beta">DEMO</span></div><div class="brand-subtitle">全球流域参数移植与洪水模拟平台</div></div>
-      <div class="topbar-right"><div class="research-label"><span class="status-dot"></span>地理科学 <span class="separator">/</span> 水文模拟</div><a class="button ghost github-front-link" href="https://github.com/LENS-AI4S/hydrotransfer-demo" target="_blank" rel="noopener noreferrer">GitHub ↗</a><button class="button ghost" id="sourceBtn"><svg viewBox="0 0 20 20"><path d="M4 3h12v14H4zM7 7h6M7 10h6M7 13h4"/></svg>数据来源</button><button class="button primary" id="exportProject"><svg viewBox="0 0 20 20"><path d="M10 2v10m-4-4 4 4 4-4M4 13v4h12v-4"/></svg>导出演示配置</button></div>
-    </header>
-    <aside class="sidebar">
-      <div class="workspace-label">研究工作空间 <span>GLOBAL</span></div>
-      <div class="project-label"><span class="project-symbol">H</span><div><b>全球流域模拟研究</b><small>Global basin research</small></div></div>
-      <div class="nav-label">研究工作台</div>
-      <nav class="workflow-nav" aria-label="研究导航">
-        <button class="nav-item active" data-view="overview"><span class="nav-number">01</span><span><b>全球流域</b><small>空间边界与样例区域</small></span><span class="nav-arrow">›</span></button>
-        <button class="nav-item" data-view="results"><span class="nav-number">02</span><span><b>研究成果</b><small>一键展开多模态结果</small></span><span class="nav-arrow">›</span></button>
-        <button class="nav-item" data-view="data"><span class="nav-number">03</span><span><b>数据立方体</b><small>空间 · 深度 · 年份切片</small></span><span class="nav-arrow">›</span></button>
-        <button class="nav-item" data-view="workflow" hidden><span class="nav-number">04</span><span><b>数据处理流程</b><small>从原始数据到模型输入</small></span><span class="nav-arrow">›</span></button>
-        <button class="nav-item" data-view="simulation"><span class="nav-number">04</span><span><b>参数移植与模拟</b><small>跨流域迁移与过程展示</small></span><span class="nav-arrow">›</span></button>
-      </nav>
-      <div class="sidebar-rule"></div>
-      <div class="nav-label basin-label">已接入试点 <span>05</span></div><div id="pilotList" class="basin-list"></div><div class="nav-label basin-label">区域参考 <span>06</span></div>
-      <div id="basinList" class="basin-list"></div>
-      <div class="sidebar-note"><span class="tiny-wave">≈</span><b>从一个流域，走向全球</b><p>以公开数据为基础，探索跨区域洪水模拟的可迁移性。</p><span class="outline-tag">科研展示原型</span></div>
-    </aside>
-    <main class="main">
-      <div class="breadcrumb"><span>研究工作空间</span><i>/</i><b id="breadcrumbCurrent">全球流域</b><span class="breadcrumb-tail">PROJECT · GLOBAL HYDROLOGY</span></div>
-      <section id="overviewView">
-        <div class="page-heading"><div><div class="eyebrow">GLOBAL BASIN EXPLORER</div><h1>全球流域总览<span class="heading-dot">.</span></h1><p>全球边界与上下游关系，连接五个试点的真实多模态成果。</p></div><button class="button" id="importBoundary"><svg viewBox="0 0 20 20"><path d="M10 13V3m-4 4 4-4 4 4M4 12v5h12v-5"/></svg>导入流域边界</button><input type="file" id="boundaryFile" accept=".geojson,.json" hidden></div>
-        <div class="metrics">
-          <article class="metric"><div class="metric-caption" id="boundaryCaption">Level 8 子流域<span class="metric-icon">◎</span></div><div class="metric-value" id="boundaryCount">—<small>个</small></div><div class="metric-foot"><span class="dot blue"></span><span id="boundaryMeta">HydroBASINS v1c · Level 8</span></div></article>
-          <article class="metric"><div class="metric-caption">已接入试点流域<span class="metric-icon">⌖</span></div><div class="metric-value">5<small>个</small></div><div class="metric-foot">北京 · 桂林 · 贵港 · 广州 · 韶关</div></article>
-          <article class="metric"><div class="metric-caption">来源—流域候选<span class="sample-label">待核定</span></div><div class="metric-value">11<small>条</small></div><div class="metric-foot">保留原始来源与日期，不等于独立洪水数</div></article>
-          <article class="metric"><div class="metric-caption">已接入证据记录<span class="metric-icon">▱</span></div><div class="metric-value">535<small>条</small></div><div class="metric-foot"><span class="dot teal"></span>文本 · 流量 · SAR · MODIS</div></article>
-        </div>
-        <div class="explorer-grid">
-          <section class="map-card">
-            <div class="map-toolbar"><div class="map-title"><span class="dot blue"></span><b>全球流域分布</b><span id="mapLevel">LEVEL 08</span></div><div class="map-actions"><button id="worldView" class="map-tab active">全球视图</button><button id="basinView" class="map-tab">流域视图</button></div></div>
-            <div class="dataset-toolbar"><span class="dataset-status"><i></i>HydroBASINS v1c</span><label for="orderSelect">分区层级 <select id="orderSelect" aria-label="HydroBASINS 分区层级"><option value="8">Level 8</option></select></label><label for="areaFilter">面积筛选 <select id="areaFilter" aria-label="按累计上游面积筛选"><option value="all">全部分区</option><option value="up200_3000">上游 200–3000 km²</option></select></label><span id="visibleBasinCount">正在读取边界</span><button id="orderHelp" title="了解层级与面积口径" aria-label="层级与面积口径说明">ⓘ</button></div>
-            <div class="map-stage" id="mapStage">
-              <svg id="worldMap" role="img" aria-label="可交互全球流域地图，支持点击流域、拖拽和缩放" viewBox="0 0 1100 600"></svg>
-              <div class="map-loading" id="mapLoading">正在准备全球流域边界…</div>
-              <div class="map-search"><svg viewBox="0 0 20 20"><circle cx="8" cy="8" r="5"/><path d="m12 12 5 5"/></svg><input id="basinSearch" type="search" placeholder="搜索流域名或 HYBAS_ID" aria-label="搜索流域名称或 HYBAS_ID"><kbd>⌕</kbd><div id="searchResults" class="search-results" hidden></div></div>
-              <div class="map-coordinate" id="mapCoordinate">30.00° N &nbsp; 108.00° E</div>
-              <div class="map-controls"><button id="zoomIn" aria-label="放大地图" title="放大">+</button><button id="zoomOut" aria-label="缩小地图" title="缩小">−</button><button id="resetMap" aria-label="重置全球视图" title="重置视图">⌖</button></div>
-              <div class="map-layer-control"><button id="layersBtn" class="button" aria-expanded="false"><svg viewBox="0 0 20 20"><path d="m10 2 8 5-8 5-8-5 8-5Zm-8 9 8 5 8-5M2 15l8 4 8-4"/></svg>图层</button><div class="layers-popover" id="layersPopover" hidden><label><input type="checkbox" id="basinToggle" checked> Level 8 边界</label><label><input type="checkbox" id="riverToggle" disabled> 河网待接入</label><label><input type="checkbox" id="markerToggle" checked> 大流域参考</label></div></div>
-              <div class="map-legend"><b>图例</b><span><i class="legend-fill"></i>Level 8 分区</span><span><i class="legend-current"></i>当前分区</span><span><i class="legend-upstream"></i>上游分区</span><span><i class="legend-downstream"></i>下游分区</span><span><i class="legend-marker"></i>大流域参考</span><small>点击分区查看上下游</small></div>
-              <div class="map-north"><span>N</span><svg viewBox="0 0 20 34"><path d="M10 0 18 29 10 23 2 29Z" fill="#45718b"/><path d="M10 0v23l8 6Z" fill="#aac2d2"/></svg></div>
-              <div id="mapTooltip" class="map-tooltip" hidden></div>
-            </div>
-            <div class="map-footer"><span id="mapAttribution">HydroBASINS · Natural Earth 陆地 · 概化显示</span><button id="mapSources">查看来源 ↗</button></div>
-          </section>
-          <aside class="basin-detail" id="basinDetail"></aside>
-        </div>
-        <section id="researchOverview" class="rr-overview"></section>
-        <div class="overview-note"><span>i</span> <b id="boundaryQualityNote"></b>主分区为 HydroBASINS Level 8。支持按累计上游面积筛选；具体试点按出口与数据条件确定，候选出口可能嵌套。五个试点已接入真实处理成果；来源候选和证据采用待核定，参数移植与模拟尚未执行。</div>
-      </section>
-      <section id="detailView" hidden></section>
-      <footer class="app-footer"><span>HydroTransfer <i>·</i> 全球流域参数移植与洪水模拟平台</span><span>RESEARCH DEMONSTRATOR <i>·</i> 2026</span></footer>
-    </main>
-  </div>
-  <dialog id="infoDialog"><div class="dialog-header"><div><span class="eyebrow">HYDROTRANSFER</span><h2 id="dialogTitle">演示说明</h2></div><button id="closeDialog" aria-label="关闭弹窗">×</button></div><div id="dialogContent"></div></dialog>
+  <header class="app-header">
+    <a class="brand" href="#overview" data-view="overview" aria-label="HydroTransfer 首页"><svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 2C9 10 3 15 3 21a11 11 0 0022 0c0-6-6-11-11-19Z"/><path d="M6 20c6-5 10 5 17-1M6 25c6-4 11 4 15-1"/></svg><span>HydroTransfer</span></a>
+    <nav class="primary-nav" aria-label="主导航">
+      <button data-view="overview">流域地图</button><button data-view="data">数据立方体</button><button data-view="results">研究结果</button><button data-view="reports">报告与判定</button><button data-view="simulation">参数模拟</button>
+    </nav>
+    <div class="header-actions"><a class="text-link" href="https://github.com/LENS-AI4S/hydrotransfer-demo" target="_blank" rel="noopener noreferrer">GitHub ↗</a><button class="icon-button" id="appMenuButton" aria-label="更多操作" aria-expanded="false">···</button><div class="app-menu" id="appMenu" hidden><button id="sourceBtn">数据来源</button><button data-view="workflow">处理流程</button><button data-view="inputs">本地输入登记</button><button id="exportProject">导出当前配置</button><button id="importBoundary">导入边界</button><button id="aboutBtn">关于平台</button></div></div>
+  </header>
+  <main class="main">
+    <section id="overviewView" aria-label="流域地图工作区">
+      <div class="map-topbar">
+        <div class="map-search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="8" r="5"/><path d="m12 12 5 5"/></svg><input id="basinSearch" type="search" placeholder="搜索流域名称或编号" aria-label="搜索流域名称或 HYBAS_ID" autocomplete="off"><div id="searchResults" class="search-results" hidden></div></div>
+        <div class="map-filter"><label for="mapRegion">区域</label><select id="mapRegion" aria-label="地图区域"><option value="auto">按视图载入</option><option value="1">非洲</option><option value="2">欧洲和中东</option><option value="3">西伯利亚</option><option value="4">亚洲</option><option value="5">澳大利亚和大洋洲</option><option value="6">南美洲</option><option value="7">北美洲</option><option value="8">加拿大北部</option><option value="9">格陵兰</option></select></div>
+        <div class="map-filter"><label for="areaFilter">上游面积</label><select id="areaFilter" aria-label="按累计上游面积筛选"><option value="all">不限</option><option value="up200_3000">200–3000 km²</option></select></div>
+        <span class="dataset-source">HydroBASINS · Level 8 <button class="help-button" id="orderHelp" aria-label="层级与面积口径说明">ⓘ</button></span>
+      </div>
+      <div id="pickerNotice" class="picker-notice" hidden><span>点击地图中的分区，或输入流域编号。</span><button class="button small" id="finishBasinPick">使用当前流域</button><button class="text-button" id="cancelBasinPick">取消</button></div>
+      <div class="map-workspace">
+        <section class="map-card" aria-label="全球流域地图">
+          <div class="map-stage" id="mapStage">
+            <svg id="worldMap" role="img" aria-label="可交互流域地图，支持点选、拖动和缩放" viewBox="0 0 1100 600"></svg>
+            <div class="map-loading" id="mapLoading">正在准备地图…</div>
+            <div class="map-view-controls"><button id="worldView" class="map-tab active">全球</button><button id="basinView" class="map-tab">当前流域</button></div>
+            <div class="map-controls"><button id="zoomIn" aria-label="放大地图">+</button><button id="zoomOut" aria-label="缩小地图">−</button><button id="resetMap" aria-label="重置全球视图">⌖</button></div>
+            <div class="map-layer-control"><button id="layersBtn" class="button small" aria-expanded="false">图层</button><div class="layers-popover" id="layersPopover" hidden><label><input type="checkbox" id="basinToggle" checked> 流域边界</label><label><input type="checkbox" id="riverToggle" checked> 河网</label><label><input type="checkbox" id="markerToggle"> 大流域定位</label><button class="text-button" id="mapSources">来源与精度说明</button></div></div>
+            <div class="map-legend"><span><i class="legend-current"></i>当前</span><span><i class="legend-upstream"></i>上游</span><span><i class="legend-downstream"></i>下游</span><span><i class="legend-river"></i>河网</span></div>
+            <div class="map-coordinate" id="mapCoordinate"></div><div id="mapTooltip" class="map-tooltip" hidden></div>
+          </div>
+          <div class="map-footer"><span id="visibleBasinCount">全球 190,675 个分区</span><span id="mapLoadStatus" role="status"></span></div>
+        </section>
+        <aside class="basin-detail" id="basinDetail" aria-label="当前流域详情"></aside>
+      </div>
+      <div class="map-context-row"><label for="referenceSelect">大流域定位 <select id="referenceSelect"><option value="">选择参考范围</option><option value="yangtze">长江</option><option value="mekong">湄公河</option><option value="rhine">莱茵河</option><option value="amazon">亚马孙</option><option value="mississippi">密西西比河</option><option value="congo">刚果河</option></select></label><span id="boundaryQualityNote">边界为概化显示，计算使用原始数据。</span></div>
+    </section>
+    <section id="detailView" hidden></section>
+  </main>
+  <input type="file" id="boundaryFile" accept=".geojson,.json" hidden>
+  <dialog id="infoDialog"><div class="dialog-header"><h2 id="dialogTitle"></h2><button id="closeDialog" class="icon-button" aria-label="关闭弹窗">×</button></div><div id="dialogContent"></div></dialog>
   <div class="toast" id="toast" role="status" hidden></div>
-  <script src="assets/d3.min.js"></script><script src="assets/topojson-client.min.js"></script><script src="assets/hydrobasins-geo.js"></script><script src="assets/hydrobasins-l08-1.js"></script><script src="assets/hydrobasins-l08-2.js"></script><script src="assets/hydrobasins-l08-3.js"></script><script src="assets/hydrobasins-l08-4.js"></script><script src="assets/hydrobasins-l08-5.js"></script><script src="assets/hydrobasins-l08-6.js"></script><script src="assets/hydrobasins-l08-7.js"></script><script src="assets/hydrobasins-l08-8.js"></script><script src="assets/hydrobasins-l08-9.js"></script><script src="assets/catalog.js"></script><script src="detail-views.js"></script><script src="assets/research-results.js"></script><script src="research-results.js"></script><script src="assets/cube-previews.js"></script><script src="cube-viewer.js"></script><script src="hydrobasins-canvas.js"></script><script src="hydro-topology.js"></script><script src="app-hydrobasins.js"></script>
-</body>
-</html>
+  <script src="assets/d3.min.js?v=20261105-ui8"></script><script src="assets/topojson-client.min.js?v=20261105-ui8"></script><script src="assets/hydrobasins-geo.js?v=20261105-ui8"></script><script src="assets/basin-seed.js?v=20261105-ui8"></script><script src="assets/basin-native-pilots.js?v=20261105-ui8"></script><script src="assets/catalog.js?v=20261105-ui8"></script><script src="assets/resource-manifest.js?v=20261105-ui8"></script><script src="asset-loader.js?v=20261105-ui8"></script><script src="hydrobasins-canvas.js?v=20261105-ui8"></script><script src="hydro-topology.js?v=20261105-ui8"></script><script src="app-hydrobasins.js?v=20261105-ui8"></script>
+</body></html>

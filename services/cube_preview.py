@@ -23,10 +23,28 @@ FIELDS={
  'soil_total_n':('全氮','g/kg',0,10,'soil'),
  'soil_awc_rootzone':('根区有效储水量','mm',0,300,'root'),
  'elevation':('地形高程','m',0,3000,'dem'),
- 'land_cover':('土地覆盖','概化类别',0,0,'landcover')}
+ 'land_cover':('土地覆盖','原始分类编码',0,0,'landcover')}
 DEPTHS=['0–20 cm','20–40 cm','40–60 cm','60–80 cm','80–100 cm','100–150 cm','150–200 cm']
-LAND_CLASSES=[('耕地','#d8bc72'),('林地','#39876c'),('灌丛','#95b67a'),('草地','#c9d887'),('湿地','#74afbd'),('建设用地','#be6d63'),('裸地','#c4b298'),('水体','#3a8eb8'),('冰雪','#dfeaf0'),('稀疏植被 / 其他','#a4ad9b')]
-PALETTE=np.asarray([[237,247,250],[220,239,243],[199,228,234],[174,214,224],[146,196,212],[112,174,198],[79,150,183],[54,124,162],[36,99,140],[25,77,115],[18,59,92],[11,42,69]],dtype='uint8')
+LAND_CODES=[10,11,12,20,51,52,61,62,71,72,81,82,91,92,120,121,122,130,140,150,152,153,181,182,183,184,185,186,187,190,200,201,202,210,220]
+LAND_NAMES=['雨养耕地','草本覆盖耕地','乔木 / 灌木耕地','灌溉耕地','疏林常绿阔叶林','密林常绿阔叶林','疏林落叶阔叶林','密林落叶阔叶林','疏林常绿针叶林','密林常绿针叶林','疏林落叶针叶林','密林落叶针叶林','疏林混交林','密林混交林','灌丛','常绿灌丛','落叶灌丛','草地','地衣与苔藓','稀疏植被','稀疏灌丛','稀疏草本','沼泽林','沼泽','洪泛平地','盐渍地','红树林','盐沼','潮滩','不透水面','裸地','固结裸地','未固结裸地','水体','永久冰雪']
+LAND_HEX=['#ffff64','#ffff64','#ffff00','#aaf0f0','#4c7300','#006400','#aac800','#00a000','#005000','#003c00','#286400','#285000','#a0b432','#788200','#966400','#964b00','#966400','#ffb432','#ffdcd2','#ffebaf','#ffd278','#ffebaf','#00a884','#73ffdf','#9ebbd7','#828282','#f57ab6','#66cdab','#444f89','#c31400','#fff5d7','#dcdcdc','#fff5d7','#0046c8','#ffffff']
+LAND_CLASSES=list(zip(LAND_NAMES,LAND_HEX))
+LAND_CODE_COLORS={code:tuple(int(color[i:i+2],16) for i in [1,3,5]) for code,color in zip(LAND_CODES,LAND_HEX)}
+COLOR_SOURCES={
+ 'landcover':{'name':'GLC_FCS30D 官方用户指南 · 35类RGB','url':'https://zenodo.org/records/15063683/files/GLC_FCS30D%20UserGuides.pdf'},
+ 'soil':{'name':'ColorBrewer 连续属性顺序色标','url':'https://github.com/axismaps/colorbrewer'},
+ 'dem':{'name':'GMT geo 陆地高程色标（重标度至当前范围）','url':'https://github.com/GenericMappingTools/gmt/blob/master/share/cpt/gmt/geo.cpt'}}
+_SCHEMES={
+ 'YlOrBr':['#ffffe5','#fff7bc','#fee391','#fec44f','#fe9929','#ec7014','#cc4c02','#993404','#662506'],
+ 'Oranges':['#fff5eb','#fee6ce','#fdd0a2','#fdae6b','#fd8d3c','#f16913','#d94801','#a63603','#7f2704'],
+ 'YlGn':['#ffffe5','#f7fcb9','#d9f0a3','#addd8e','#78c679','#41ab5d','#238443','#006837','#004529'],
+ 'YlGnBu':['#ffffd9','#edf8b1','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#253494','#081d58'],
+ 'geo':['#006147','#107a2f','#e8d77d','#a14300','#643219','#6e6d6c','#fffefd']}
+SCHEME_KEYS={'soil_sand':'YlOrBr','soil_clay':'Oranges','soil_org_carbon':'YlGn','soil_awc_rootzone':'YlGnBu','elevation':'geo','soil_moisture':'YlGnBu'}
+def palette_for(key):
+    anchors=_SCHEMES[SCHEME_KEYS.get(key,'YlOrBr')]
+    rgb=np.asarray([[int(c[i:i+2],16) for i in [1,3,5]] for c in anchors])
+    return np.asarray([np.interp(np.linspace(0,len(anchors)-1,12),np.arange(len(anchors)),rgb[:,i]) for i in range(3)]).T.round().astype('uint8')
 
 def geometry_bounds(geometry):
     pts=[]
@@ -45,7 +63,7 @@ class CubePreview:
         self.info={k:json.loads((self.root/f'{k}_ready.json').read_text(encoding='utf-8')) for k in ['soil','landcover','dem']}
         self.store=zarr.storage.ZipStore(self.asset_path(self.info['soil']['lookup']),mode='r')
         self.lookup=xr.open_zarr(self.store,consolidated=True)
-        self.cache=OrderedDict();self.lock=threading.Lock();self.spatial={};self.field_arrays={}
+        self.cache=OrderedDict();self.lock=threading.Lock();self.spatial={};self.field_arrays={};self.present_classes={}
 
     def asset_path(self,value):
         original=Path(value)
@@ -107,13 +125,12 @@ class CubePreview:
             good=mask&np.isfinite(a);picture=np.zeros((*shape,4),dtype='uint8')
             picture[mask]=[187,199,208,255]
             if kind=='landcover':
-                codes=np.where(good,a,-1).astype(int);groups=np.full(shape,9,dtype=int)
-                for idx,cond in enumerate([(codes>=10)&(codes<=20),(codes>=50)&(codes<100),(codes>=120)&(codes<130),(codes>=130)&(codes<140),(codes>=180)&(codes<190),codes==190,(codes>=200)&(codes<210),codes==210,codes==220]):groups[cond]=idx
-                colors=np.asarray([[int(c[i:i+2],16) for i in [1,3,5]] for _,c in LAND_CLASSES],dtype='uint8')
-                picture[good,:3]=colors[groups[good]]
+                codes=np.where(good,a,-1).astype(int)
+                self.present_classes[basin]=sorted(int(c) for c in np.unique(codes[good]))
+                for code,color in LAND_CODE_COLORS.items():picture[(codes==code)&good,:3]=color
             else:
                 lo,hi=FIELDS[key][2:4];bins=np.floor(np.clip((np.nan_to_num(a)-lo)/(hi-lo),0,1)*11).astype(int)
-                picture[good,:3]=PALETTE[bins[good]]
+                picture[good,:3]=palette_for(key)[bins[good]]
             picture[good,3]=255
             image=Image.fromarray(picture);scale=8
             image=image.resize((width*scale,height*scale),Image.Resampling.NEAREST)
