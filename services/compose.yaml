@@ -1,0 +1,21 @@
+services:
+  cube-preview:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8767:8767"
+    environment:
+      HYDRO_CUBE_ROOT: /data/cube
+      CUBE_BASINS_FILE: /config/basins.local.json
+      CUBE_PREVIEW_TOKEN: ${CUBE_PREVIEW_TOKEN:?Set a private preview access code}
+      CUBE_ALLOWED_ORIGINS: ${CUBE_ALLOWED_ORIGINS:?Set exact frontend origins}
+    volumes:
+      - ${HYDROTRANSFER_DATA_DIR:?Set NAS data directory}:/data:ro
+      - ${CUBE_BASINS_FILE:?Set allowed basin GeoJSON}:/config/basins.local.json:ro
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true

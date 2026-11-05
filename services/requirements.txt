@@ -1,0 +1,6 @@
+numpy>=2.0,<3
+rasterio>=1.4,<2
+xarray>=2025.1
+zarr>=3,<4
+pillow>=11,<13
+numcodecs>=0.15
