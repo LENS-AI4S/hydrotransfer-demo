@@ -19,7 +19,7 @@
 
 `cube-viewer.js`：立方体界面；`research-results.js`：多模态成果；`app-hydrobasins.js`：地图、选择与导航；`hydro-topology.js`：上下游关系。`services/` 是可选的只读预览服务代码，当前没有远程部署。
 
-GitHub Pages 是主要线上入口，从 `main` 分支根目录自动发布；更新此分支后，GitHub执行Pages构建与部署。Sites 地址是独立部署，更新 Sites 不会自动更新本地址。无需运行NAS服务即可查看当前网页。本仓库是展示工程，科学处理工程另行维护。
+项目只维护本地版与 GitHub Pages 线上版。本地完成修改和验证后，同步到本仓库；GitHub Pages 从 `main` 分支根目录自动构建与部署，以部署成功和线上资源核对通过作为发布完成条件。无需运行NAS服务即可查看当前网页。本仓库是展示工程，科学处理工程另行维护。
 
 本地可用 `python -m http.server 8000` 打开预览。
 
