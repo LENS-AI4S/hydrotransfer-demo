@@ -63,4 +63,4 @@ node scripts/check-research-results.cjs
 
 ## 只读数据立方体
 
-已接入五个试点、6变量、7个土壤层和120张预览；前端为 `dist/cube-viewer.js`，只读预览生成器为 `scripts/build_cube_previews.py`。NAS预览服务代码在 `services/`，当前未远程部署。完整数值数组保留私有目录，详见 [DATA_CUBE.md](DATA_CUBE.md)。
+已接入五个试点、7变量、7个土壤层；140张静态/五期土地覆盖预览，47,485张逐日土壤水分预览（2000–2025，共9,497天）。前端为 `dist/cube-viewer.js`，土地利用年轴与土壤水分日轴独立。生成器为 `scripts/build_cube_previews.py` 和 `scripts/build_moisture_all_years.py`；日数据按年度资源懒加载。NAS预览服务代码在 `services/`，当前未远程部署。完整数值数组保留私有目录，详见 [DATA_CUBE.md](DATA_CUBE.md)。

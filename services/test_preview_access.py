@@ -7,8 +7,8 @@ from cube_preview import Handler
 
 class FakeCube:
     def catalog(self):return {'raw_download':False,'array_access':False}
-    def render(self,basin,key,depth):
-        if basin!='4080477690' or key!='soil_sand' or depth!=0:raise ValueError()
+    def render(self,basin,key,depth,year=2020):
+        if basin!='4080477690' or key not in ['soil_sand','land_cover'] or depth!=0 or year not in [2000,2005,2010,2015,2020]:raise ValueError()
         return b'\x89PNG\r\n\x1a\n'
 
 class Contract(unittest.TestCase):
@@ -33,4 +33,8 @@ class Contract(unittest.TestCase):
             self.assertEqual(self.request(p)[0].status,404)
     def test_no_write_method(self):self.assertEqual(self.request('/api/cube/catalog',method='POST')[0].status,501)
     def test_unknown_basin_denied(self):self.assertEqual(self.request('/api/cube/preview/9999999999/soil_sand/0.png')[0].status,400)
+    def test_year_selects_only_allowed_land_cover(self):
+        self.assertEqual(self.request('/api/cube/preview/4080477690/land_cover/0/2000.png')[0].status,200)
+        self.assertEqual(self.request('/api/cube/preview/4080477690/land_cover/0/2001.png')[0].status,404)
+        self.assertEqual(self.request('/api/cube/preview/4080477690/soil_sand/0/2000.png')[0].status,400)
 if __name__=='__main__':unittest.main()

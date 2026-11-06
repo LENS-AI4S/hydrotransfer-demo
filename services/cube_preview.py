@@ -61,6 +61,11 @@ class CubePreview:
         self.basins={str(f['properties']['HYBAS_ID']):f for f in json.loads(Path(basin_config).read_text(encoding='utf-8'))['features']}
         if not 1<=len(self.basins)<=20:raise ValueError('Configure 1–20 allowed basins')
         self.info={k:json.loads((self.root/f'{k}_ready.json').read_text(encoding='utf-8')) for k in ['soil','landcover','dem']}
+        self.landcover={2020:self.info['landcover']}
+        for year in [2000,2005,2010,2015]:
+            path=self.root/f'landcover_{year}_ready.json'
+            if path.exists():self.landcover[year]=json.loads(path.read_text(encoding='utf-8'))
+        self.land_classes_by_year={}
         self.store=zarr.storage.ZipStore(self.asset_path(self.info['soil']['lookup']),mode='r')
         self.lookup=xr.open_zarr(self.store,consolidated=True)
         self.cache=OrderedDict();self.lock=threading.Lock();self.spatial={};self.field_arrays={};self.present_classes={}
@@ -79,7 +84,7 @@ class CubePreview:
         return {'service':'HydroTransfer protected cube preview','schema_version':1,
             'basins':[{'hybas_id':key,'name':f['properties'].get('city',key)} for key,f in self.basins.items()],
             'variables':[{'key':k,'name':v[0],'unit':v[1],'min':v[2],'max':v[3],'kind':v[4]} for k,v in FIELDS.items()],
-            'depths':DEPTHS,'landcover_year':2020,'preview_long_edge_cells':96,'continuous_color_bins':12,
+            'depths':DEPTHS,'landcover_year':2020,'landcover_years':sorted(self.landcover),'preview_long_edge_cells':96,'continuous_color_bins':12,
             'raw_download':False,'array_access':False,'point_values':False,
             'note':'固定试点的低分辨率预览图；不提供原始文件、数值数组或任意范围请求。图片本身仍可被保存。'}
 
@@ -90,11 +95,12 @@ class CubePreview:
                 dst_transform=tr,dst_crs='EPSG:4326',dst_nodata=np.nan,resampling=resampling)
         return out
 
-    def render(self,basin,key,depth):
+    def render(self,basin,key,depth,year=2020):
         if basin not in self.basins or key not in FIELDS:raise ValueError('Unknown selection')
         kind=FIELDS[key][4]
+        if kind=='landcover' and year not in self.landcover:raise ValueError('Land-cover year not ready')
         if not 0<=depth<7 or (kind!='soil' and depth!=0):raise ValueError('Invalid depth')
-        cache_key=(basin,key,depth)
+        cache_key=(basin,key,depth,year if kind=='landcover' else None)
         with self.lock:
             if cache_key in self.cache:
                 self.cache.move_to_end(cache_key);return self.cache[cache_key]
@@ -114,7 +120,7 @@ class CubePreview:
                 if kind=='soil':a=values[depth,ids]
                 else:a=values[ids]
             elif kind=='landcover':
-                a=self.read_raster(self.info['landcover']['native_cog'],shape,tr)
+                a=self.read_raster(self.landcover[year]['native_cog'],shape,tr)
                 a[np.isin(a,[0,250,255])]=np.nan
             else:
                 a=np.full(shape,np.nan,dtype='float32')
@@ -126,7 +132,9 @@ class CubePreview:
             picture[mask]=[187,199,208,255]
             if kind=='landcover':
                 codes=np.where(good,a,-1).astype(int)
-                self.present_classes[basin]=sorted(int(c) for c in np.unique(codes[good]))
+                classes=sorted(int(c) for c in np.unique(codes[good]))
+                self.land_classes_by_year.setdefault(basin,{})[str(year)]=classes
+                if year==2020:self.present_classes[basin]=classes
                 for code,color in LAND_CODE_COLORS.items():picture[(codes==code)&good,:3]=color
             else:
                 lo,hi=FIELDS[key][2:4];bins=np.floor(np.clip((np.nan_to_num(a)-lo)/(hi-lo),0,1)*11).astype(int)
@@ -168,11 +176,12 @@ class Handler(BaseHTTPRequestHandler):
             if len(hits)>=45:self.json_out(429,{'error':'Too many preview requests'});return
             hits.append(now)
         if path=='/api/cube/catalog':self.json_out(200,self.server.cube.catalog());return
-        match=re.fullmatch(r'/api/cube/preview/(\d{10})/([a-z_]+)/([0-6])\.png',path)
+        match=re.fullmatch(r'/api/cube/preview/(\d{10})/([a-z_]+)/([0-6])(?:/(2000|2005|2010|2015|2020))?\.png',path)
         if not match or urlsplit(self.path).query:
             self.json_out(404,{'error':'No raw file or array endpoint'});return
         try:
-            b=self.server.cube.render(match[1],match[2],int(match[3]))
+            if match[4] and match[2]!='land_cover':raise ValueError('Year only applies to land cover')
+            b=self.server.cube.render(match[1],match[2],int(match[3]),year=int(match[4] or 2020))
             self.headers_out(200,'image/png',len(b));self.wfile.write(b)
         except ValueError:self.json_out(400,{'error':'Selection is not allowed'})
         except Exception:self.json_out(503,{'error':'Preview temporarily unavailable'})
