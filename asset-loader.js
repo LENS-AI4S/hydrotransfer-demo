@@ -12,7 +12,7 @@
     });inflight.set(name,promise);promise.catch(()=>inflight.delete(name));return promise;
   }
   const groups={
-    cube:['assets/cube-previews.js','cube-viewer.js'],
+    cube:['assets/cube-previews.js','assets/cube-discharge-catalog.js','cube-viewer.js'],
     report:['assets/report-data.js','report-viewer.js'],
     results:['assets/report-data.js','report-viewer.js','research-results.js'],
     details:['detail-views.js']
