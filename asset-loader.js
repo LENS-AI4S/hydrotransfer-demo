@@ -14,7 +14,7 @@
   const groups={
     cube:['assets/cube-previews.js','assets/cube-discharge-catalog.js','cube-viewer.js'],
     report:['assets/report-data.js','report-viewer.js'],
-    results:['assets/report-data.js','report-viewer.js','research-results.js'],
+    results:['assets/report-data.js','report-viewer.js','research-results.js','global-results.js'],
     details:['detail-views.js']
   };
   async function group(name){for(const file of groups[name]||[])await script(file);}

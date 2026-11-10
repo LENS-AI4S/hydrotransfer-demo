@@ -5,7 +5,8 @@
 **在线界面：[打开数据立方体](https://lens-ai4s.github.io/hydrotransfer-demo/#data)**
 
 - 全球 HydroBASINS Level 8：190,675 个分区，支持上下游高亮。
-- 五个试点的真实研究成果：11条来源候选、535条证据、145条关联，6项MODIS共232个逐日帧。
+- 新增100项光学已完成案例，按GBFEID关联水文、Groundsource与已交付的SAR证据；12项共467帧逐日光学切片。
+- 历史五流域报告与11项案例另行保留，保持原判定口径。
 - 数据立方体：全球分区选择、8变量、7个土壤深度、140张静态/五期土地覆盖预览，以及各47,485张逐日土壤水分与GloFAS流量切片；支持年份、日期切换与播放。
 - 来源候选不是已确认的独立洪水次数，证据采用待核定。参数移植模拟仍为演示。
 
@@ -17,7 +18,7 @@
 
 ## 代码与部署
 
-`cube-viewer.js`：立方体界面；`research-results.js`：多模态成果；`app-hydrobasins.js`：地图、选择与导航；`hydro-topology.js`：上下游关系。`services/` 是可选的只读预览服务代码，当前没有远程部署。
+`global-results.js`：光学完成案例与分来源结果；`cube-viewer.js`：立方体界面；`research-results.js`：多模态成果；`app-hydrobasins.js`：地图、选择与导航；`hydro-topology.js`：上下游关系。`services/` 是可选的只读预览服务代码，当前没有远程部署。
 
 项目只维护本地版与 GitHub Pages 线上版。本地完成修改和验证后，同步到本仓库；GitHub Pages 从 `main` 分支根目录自动构建与部署，以部署成功和线上资源核对通过作为发布完成条件。无需运行NAS服务即可查看当前网页。本仓库是展示工程，科学处理工程另行维护。
 
