@@ -6,9 +6,9 @@ window.HYDRO_CATALOG = [
     "category": "流域边界",
     "resolution": "15角秒源网格 · Pfafstetter Level 8",
     "coverage": "全球陆地，南极洲除外",
-    "description": "已接入190,675个分区和原始上下游关系；五试点结果按HYBAS_ID关联。",
+    "description": "已接入190,675个分区和原始上下游关系；本批100项光学完成案例按原HYBAS_ID关联，98个流域提供原始边界。",
     "url": "https://www.hydrosheds.org/products/hydrobasins",
-    "status": "边界、拓扑与五试点已接入"
+    "status": "全球边界与拓扑已接入"
   },
   {
     "id": "era5-land",
@@ -28,9 +28,9 @@ window.HYDRO_CATALOG = [
     "category": "地形",
     "resolution": "15角秒",
     "coverage": "全球陆海地形",
-    "description": "全球8幅原生高程已处理并验收；未进行水文校正，按流域物化待按需执行。",
+    "description": "全球高程资产已就绪；原五试点与新增98个案例流域已有只读高程预览，未进行水文校正。",
     "url": "https://www.gebco.net/data-products/gridded-bathymetry-data",
-    "status": "全球资产已就绪"
+    "status": "全球资产及案例预览已接入"
   },
   {
     "id": "hwsd-v22",
@@ -39,41 +39,52 @@ window.HYDRO_CATALOG = [
     "category": "土壤",
     "resolution": "30角秒 · 7层",
     "coverage": "全球土壤",
-    "description": "土壤空间网格、7层属性查找表及原始组分表已处理；具体流域提取待按需执行。",
+    "description": "全球土壤单元、7层属性与组分表已处理；原五试点及新增98流域可浏览砂粒、黏粒、有机碳与根区有效储水量。",
     "url": "https://data.apps.fao.org/catalog/iso/ff5c613c-75bb-46a9-a162-bc728059b465",
-    "status": "全球资产已就绪"
+    "status": "7层土壤预览已接入"
   },
   {
     "id": "glc-fcs30d-2020",
-    "name": "GLC_FCS30D 2020",
+    "name": "GLC_FCS30D · 五期土地覆盖",
     "title": "土地覆盖分类",
     "category": "土地覆盖",
     "resolution": "NatCap 1角秒派生网格",
-    "coverage": "2020年全球",
-    "description": "已处理全球2020年土地覆盖；采用NatCap年度COG派生版，保留分类编码。",
+    "coverage": "全球 · 2000、2005、2010、2015、2020年",
+    "description": "采用NatCap年度COG派生版；原五试点及新增98个案例流域均有五期预览，使用官方35类编码和RGB，不插值年份。",
     "url": "https://zenodo.org/records/8239305",
-    "status": "全球资产已就绪"
+    "status": "五期预览已接入"
   },
   {
     "id": "glofas",
-    "name": "GloFAS v5",
-    "title": "模型流量过程",
+    "name": "GloFAS v5.0 · avg_dis",
+    "title": "原生格点日流量",
     "category": "水文序列",
-    "resolution": "日尺度 · 2018—2024资料",
-    "coverage": "五试点候选格点",
-    "description": "已接入五试点实际日流量曲线与高流量候选；模型出口仍待核定，北京映射不代表所选完整流域。",
+    "resolution": "0.05° · 每日 · m³/s",
+    "coverage": "原生时间戳2000-01-02至2026-01-01",
+    "description": "五试点保留完整时序；新增98个流域提供案例观测窗口切片。保持原生格点与valid_time，不计算流域平均、总和或认定出口。分来源证据另见研究结果。",
     "url": "https://global-flood.emergency.copernicus.eu/",
-    "status": "五试点处理成果已接入"
+    "status": "日流量切片已接入"
   },
   {
     "id": "soil-moisture",
-    "name": "ERA5-Land / SMAP 土壤水分",
-    "title": "已有土壤水分目录",
+    "name": "ERA5-Land / SMAP L4 · V3",
+    "title": "表层土壤湿度",
     "category": "土壤水分",
-    "resolution": "以既有产品元数据为准",
-    "coverage": "已有2000—2025年资料目录",
-    "description": "已登记外部数据目录，没有重复下载；流域与时间对齐尚待接入。",
-    "url": "https://nsidc.org/data/smap",
-    "status": "已有目录已登记"
+    "resolution": "0.1° · 每日 · m³/m³",
+    "coverage": "全球资料2000-01-01至2025-12-31",
+    "description": "五试点已有26年逐日预览；新增98个流域已有案例观测窗口切片。均值按原始网格与流域相交面积加权；不作为HWSD七层土壤水分。",
+    "url": "https://doi.org/10.57760/sciencedb.30546",
+    "status": "日湿度切片已接入"
+  },
+  {
+    "id": "hydrorivers-v10",
+    "name": "HydroRIVERS v1.0",
+    "title": "真实河网与河段关系",
+    "category": "河网",
+    "resolution": "原生矢量河段",
+    "coverage": "全球公开河网",
+    "description": "地图提供主要河道；新增98个案例流域另有详细河段预览，保留HYRIV_ID与NEXT_DOWN，线条仅为展示进行裁剪与概化。",
+    "url": "https://www.hydrosheds.org/products/hydrorivers",
+    "status": "河网已接入"
   }
 ];

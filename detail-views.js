@@ -93,8 +93,8 @@
 
   function renderData() {
     const entries=catalogEntries();
-    root.innerHTML=lead('OPEN DATA INPUTS',current.basin.name+' · 模拟输入','公开数据来源可追溯，流域级数据裁剪与质量检查在接入后开展。')+
-      '<div class="hd-notice">HydroBASINS Level 8 边界与上下游拓扑属性已接入。土壤、LUCC 与高程全球资产已登记，模型驱动和参数仍待接入；选择本地文件仅记录文件信息，不代表完成空间处理或模型接入。</div>'+
+    root.innerHTML=lead('OPEN DATA INPUTS',current.basin.name+' · 模拟输入','查看公开数据来源与本流域的输入准备状态。')+
+      '<div class="hd-notice">HydroBASINS Level 8 边界与上下游拓扑属性已接入。土壤、五期土地覆盖、高程、土壤湿度、流量与河网已登记；本批98个案例流域已生成输入预览，气象驱动与模型参数仍待接入；选择本地文件仅记录文件信息，不代表完成空间处理或模型接入。</div>'+
       '<div class="hd-sources">'+(entries.length?entries.map((d,i)=>{
         const waiting=false;
         const item=current.files[d.id];
@@ -157,7 +157,7 @@
       function advance(){if(!root||current.view!=='simulation')return;sim.progress++;if(sim.progress>=progressStages.length){sim.running=false;sim.complete=true;q(root,'#hd-progress').innerHTML=progressMarkup();q(root,'#hd-run-status').textContent=simulationStatus();q(root,'#hd-result').innerHTML=simulationResult();button.disabled=false;button.textContent='↻ 重新播放模拟演示';timer=null;return;}q(root,'#hd-progress').innerHTML=progressMarkup();q(root,'#hd-run-status').textContent=simulationStatus();timer=setTimeout(advance,650);}
       timer=setTimeout(advance,650);
     };
-    q(root,'#hd-export-config').onclick=()=>download('HydroTransfer_'+b.id+'_演示配置.json',JSON.stringify({project:'HydroTransfer',data_type:'demo_configuration',model_executed:false,target_basin:{id:b.id,name:b.name,boundary_source:b.boundarySource||'HydroBASINS v1c Level 8',source_record_id:b.sourceId||null,hydrobasins_level:b.level||null,upstream_area_km2:b.upstreamAreaKm2||null,area_km2:b.areaKm2||null},source_basin:sim.donor,transfer_strategy:sim.strategy,display_interval:sim.interval,event_window_days:sim.duration,inputs_status:'边界、基础数据与试点事件成果已接入；模型驱动、参数与计算引擎待接入',note:'界面演示配置，不包含真实模型参数或结果'},null,2));
+    q(root,'#hd-export-config').onclick=()=>download('HydroTransfer_'+b.id+'_演示配置.json',JSON.stringify({project:'HydroTransfer',data_type:'demo_configuration',model_executed:false,target_basin:{id:b.id,name:b.name,boundary_source:b.boundarySource||'HydroBASINS v1c Level 8',source_record_id:b.sourceId||null,hydrobasins_level:b.level||null,upstream_area_km2:b.upstreamAreaKm2||null,area_km2:b.areaKm2||null},source_basin:sim.donor,transfer_strategy:sim.strategy,display_interval:sim.interval,event_window_days:sim.duration,inputs_status:'边界、基础数据与本批光学案例成果已关联；气象驱动、参数与计算引擎待接入',note:'界面演示配置，不包含真实模型参数或结果'},null,2));
   }
 
   function destroy() {root?.classList.remove('hd-root');if(timer){clearTimeout(timer);timer=null;}if(current&&current.simulation.running){current.simulation.running=false;current.simulation.progress=-1;}root=null;}
