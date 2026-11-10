@@ -118,10 +118,10 @@
   }
   async function selectBasinById(id,options={}){
     const ticket=++selectionToken;id=String(id).trim();if(!/^\d{10}$/.test(id))throw Error('请输入完整的10位 HYBAS_ID');
-    if(!native.has(id))await ensureRegion(id[0]);if(ticket!==selectionToken)return null;const f=native.get(id);if(!f)throw Error('未找到此流域编号');
+    if(!native.has(id)&&!window.HYDRO_NATIVE_BOUNDARIES?.[id]){await assets.script('assets/cube-cohort/catalog.js');if(window.HYDRO_CUBE_COHORT?.basins.some(b=>b.hybas_id===id))await assets.script('assets/cube-cohort/native-boundaries.js');else await ensureRegion(id[0]);}if(ticket!==selectionToken)return null;const f=window.HYDRO_NATIVE_BOUNDARIES?.[id]||native.get(id);if(!f)throw Error('未找到此流域编号');
     syncSelected(f);renderDetail();highlight();if(mapReady)ensureConnections().catch(e=>toast(e.message));
     if(options.view)await changeView(options.view,true);else if(view!=='overview')await renderCurrentDetail();
-    if(ticket!==selectionToken)return null;if(options.eventId)window.HydroResearch?.selectEvent(options.eventId);updateHash();return f;
+    if(ticket!==selectionToken)return null;if(options.eventId)window.HydroResearch?.selectEvent(options.eventId);if(options.caseId){if(options.view==='data')await window.HydroCube?.setCaseContext(options.caseId);else if(options.view==='results')await window.HydroGlobalResearch?.selectCase(options.caseId);}else if(options.basinOnly&&options.view==='results')await window.HydroGlobalResearch?.search(id);updateHash();return f;
   }
   function selectReference(id){const r=references.find(x=>x.id===id),f=geo().majorBasins.features.find(f=>f.properties.sampleId===id);if(!r||!f)return;selectedUnit=f;selected={id:r.id,name:r.name+'参考范围',sourceId:null,region:'大流域定位',center:r.center,boundarySource:'HydroBASINS MAIN_BAS 合并'};connectionCache=null;renderDetail();highlight();focusFeature(f);}
   function updateHash(){const id=selected?.sourceId;history.replaceState(null,'','#'+view+(id?'?basin='+id:''));}
@@ -138,7 +138,7 @@
   }
   async function renderCurrentDetail(){
     if(view==='overview')return;
-    if(view==='data')window.HydroCube?.render($('#detailView'),selected);else if(view==='results')await (window.HydroGlobalResearch||window.HydroResearch)?.render($('#detailView'),selected);else if(view==='reports')window.HydroReport?.render($('#detailView'),selected);else window.HydroDetails?.render($('#detailView'),view==='inputs'?'data':view,selected);
+    if(view==='data')await window.HydroCube?.render($('#detailView'),selected);else if(view==='results')await (window.HydroGlobalResearch||window.HydroResearch)?.render($('#detailView'),selected);else if(view==='reports')window.HydroReport?.render($('#detailView'),selected);else window.HydroDetails?.render($('#detailView'),view==='inputs'?'data':view,selected);
   }
   async function openResearchEvent(id){
     const ticket=++researchToken,event=window.HydroReport?.getEvent(id);if(!event)return;

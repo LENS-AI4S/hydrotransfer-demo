@@ -12,10 +12,10 @@
     });inflight.set(name,promise);promise.catch(()=>inflight.delete(name));return promise;
   }
   const groups={
-    cube:['assets/cube-previews.js','assets/cube-discharge-catalog.js','cube-viewer.js'],
+    cube:['assets/cube-previews.js','assets/cube-discharge-catalog.js','assets/cube-cohort/catalog.js','cube-viewer.js'],
     report:['assets/report-data.js','report-viewer.js'],
     results:['assets/report-data.js','report-viewer.js','research-results.js','global-results.js'],
-    details:['detail-views.js']
+    details:['assets/cube-cohort/catalog.js','detail-views.js']
   };
   async function group(name){for(const file of groups[name]||[])await script(file);}
   const image=name=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=url(name);});

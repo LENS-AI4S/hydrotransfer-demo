@@ -8,3 +8,5 @@
 
 .hd-sim-output .hd-panel-head{align-items:center}.hd-run-status{font-size:12px;font-weight:400;color:#687381}.hd-sim-output .hd-placeholder{margin:0;border-top:0;min-height:280px;padding:25px}.hd-simulation-chart .hd-chart{max-height:360px}.hd-simulation-chart .hd-chart-foot{padding:12px 0 8px}.hd-run-details{margin-top:22px;padding-top:15px;border-top:1px solid #e3e7eb}.hd-run-details>summary{font-size:12px;color:#687381;cursor:pointer}.hd-run-details[open]>summary{margin-bottom:9px}.hd-run-details .hd-progress:last-child{border-bottom:0}@media(max-width:720px){.hd-sim-output .hd-placeholder{min-height:220px}.hd-run-status{max-width:55%;text-align:right}}
 .rr-candidate-heading>div{min-width:0}.rr-candidate-heading .rr-candidate-id{font:12px/1.6 ui-monospace,Consolas,monospace;color:#3d5365;margin:7px 0;overflow-wrap:anywhere;user-select:text}
+
+.hd-cohort-links{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 20px;padding:14px 0;border-bottom:1px solid #e6e9ed;color:#536170;font-size:13px}.hd-cohort-links>span{margin-right:auto}

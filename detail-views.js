@@ -6,6 +6,8 @@
   let current = null;
   let root = null;
   let timer = null;
+  const inputEntry=()=>window.HYDRO_CUBE_COHORT?.basins.find(b=>b.hybas_id===String(current?.basin?.sourceId||current?.basin?.id));
+  function actualStatus(i){const b=inputEntry();return i===0?'边界与上下游拓扑已接入':i===1?(b?'本流域 '+b.cases.length+' 项案例已关联分来源证据，综合判定待核定':'当前批次尚无该流域案例'):i===2?(b?'8变量切片已接入；逐日输入覆盖案例观测窗口':'全球资产已登记，本分区切片按需提取'):i===3?'属性向量尚未接入':i===4?'模型与参数尚未接入':'计算引擎尚未接入，当前仅为演示';}
 
   function defaultState(basin) {
     return {basin, view:'events', year:'all', kind:'all', search:'', event:0, step:0, files:{}, simulation:{donor:basin.id === 'rhine' ? 'mekong' : 'rhine', strategy:'foundation', interval:'daily', duration:10, progress:-1, complete:false, running:false}};
@@ -24,7 +26,7 @@
   function lead(label, title, text, button) {
     const name=current?.basin?.name;
     if(name&&title.startsWith(name+' · '))title=title.slice(name.length+3);
-    return '<header class="hd-lead"><div><h2>'+E(title)+'</h2><p>'+E(text)+'</p></div>'+(button||'')+'</header>';
+    const b=inputEntry();return '<header class="hd-lead"><div><h2>'+E(title)+'</h2><p>'+E(text)+'</p></div>'+(button||'')+'</header>'+(b?'<div class="hd-cohort-links"><span>本流域已接入 '+b.cases.length+' 个光学案例及8变量输入切片</span><button class="button" data-view="data">浏览输入</button><button class="button" data-view="results">分来源结果</button><button class="button" data-view="overview">流域地图</button></div>':'');
   }
 
   function getEvents() {
@@ -114,16 +116,16 @@
 
   function stageContent() {
     const s=stages[current.step];
-    return '<div class="hd-flow-content"><h3>'+s.name+'</h3><p>'+s.desc+'</p><div class="hd-io"><div class="hd-io-box"><small>输入</small><h4>'+s.input+'</h4><p>'+s.inputDetail+'</p></div><div class="hd-io-arrow">→</div><div class="hd-io-box"><small>输出</small><h4>'+s.output+'</h4><p>'+s.outputDetail+'</p></div></div><h4 style="font-size:13px;font-weight:500;color:#52606e">接入与检查要点</h4><ul class="hd-checklist">'+s.checks.map(v=>'<li>'+v+'</li>').join('')+'</ul><div class="hd-trace">建议保留的追溯字段<br><span style="font-family:Consolas,monospace">'+s.artifact+'</span></div><div class="hd-flow-bottom"><span class="hd-note">流程状态：待映射原有脚本与产物</span><button class="hd-button" id="hd-next-stage">'+(current.step===5?'回到第一步':'查看下一步 →')+'</button></div></div>';
+    return '<div class="hd-flow-content"><h3>'+s.name+'</h3><p>'+s.desc+'</p><div class="hd-io"><div class="hd-io-box"><small>输入</small><h4>'+s.input+'</h4><p>'+s.inputDetail+'</p></div><div class="hd-io-arrow">→</div><div class="hd-io-box"><small>输出</small><h4>'+s.output+'</h4><p>'+s.outputDetail+'</p></div></div><h4 style="font-size:13px;font-weight:500;color:#52606e">接入与检查要点</h4><ul class="hd-checklist">'+s.checks.map(v=>'<li>'+v+'</li>').join('')+'</ul><div class="hd-trace">建议保留的追溯字段<br><span style="font-family:Consolas,monospace">'+s.artifact+'</span></div><div class="hd-flow-bottom"><span class="hd-note">当前接入：'+E(actualStatus(current.step))+'</span><button class="hd-button" id="hd-next-stage">'+(current.step===5?'回到第一步':'查看下一步 →')+'</button></div></div>';
   }
 
   function renderWorkflow() {
     root.innerHTML=lead('PROCESS & PROVENANCE','从全球流域到一次洪水模拟','以新的流域单元串起事件、输入与参数，让每个结果都有来源。','<button class="hd-button" id="hd-export-plan">'+downloadIcon+'导出接入清单</button>')+
-      '<div class="hd-notice">原有流程脚本与产物待接入；当前展示建议步骤。具体的洪水识别方法、处理顺序和参数移植方法，以你的原有流程为准。</div><div class="hd-workflow"><nav class="hd-steps" aria-label="建议处理流程">'+stages.map((s,i)=>'<button class="hd-step '+(i===current.step?'active':'')+'" data-stage="'+i+'" aria-current="'+(i===current.step?'step':'false')+'"><span class="hd-step-no">'+String(i+1).padStart(2,'0')+'</span><span><b>'+s.name+'</b><small>'+s.en+'</small></span></button>').join('')+'</nav><section class="hd-panel" id="hd-stage-content">'+stageContent()+'</section></div>';
+      '<div class="hd-notice">边界、案例证据与输入预览已按同一 HYBAS_ID 关联。前3步显示当前流域的接入状态；属性表征、参数移植与模拟计算保留实际待接入状态。</div><div class="hd-workflow"><nav class="hd-steps" aria-label="建议处理流程">'+stages.map((s,i)=>'<button class="hd-step '+(i===current.step?'active':'')+'" data-stage="'+i+'" aria-current="'+(i===current.step?'step':'false')+'"><span class="hd-step-no">'+String(i+1).padStart(2,'0')+'</span><span><b>'+s.name+'</b><small>'+s.en+'</small></span></button>').join('')+'</nav><section class="hd-panel" id="hd-stage-content">'+stageContent()+'</section></div>';
     function select(index) {current.step=index;root.querySelectorAll('[data-stage]').forEach(b=>{b.classList.toggle('active',Number(b.dataset.stage)===index);b.setAttribute('aria-current',Number(b.dataset.stage)===index?'step':'false');});q(root,'#hd-stage-content').innerHTML=stageContent();q(root,'#hd-next-stage').onclick=()=>select((current.step+1)%stages.length);}
     root.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>select(Number(b.dataset.stage)));
     q(root,'#hd-next-stage').onclick=()=>select((current.step+1)%stages.length);
-    q(root,'#hd-export-plan').onclick=()=>download('HydroTransfer_'+current.basin.id+'_流程接入清单.json',JSON.stringify({project:'HydroTransfer',basin:current.basin.name,status:'建议流程，待映射原有脚本与产物',stages:stages.map((s,i)=>({step:i+1,name:s.name,input:s.input,output:s.output,checks:s.checks,provenance:s.artifact}))},null,2));
+    q(root,'#hd-export-plan').onclick=()=>download('HydroTransfer_'+current.basin.id+'_流程接入清单.json',JSON.stringify({project:'HydroTransfer',basin:current.basin.name,status:'按当前流域登记实际接入状态',stages:stages.map((s,i)=>({step:i+1,name:s.name,status:actualStatus(i),input:s.input,output:s.output,checks:s.checks,provenance:s.artifact}))},null,2));
   }
 
   const donors=[{id:'yangtze',name:'长江流域'},{id:'mekong',name:'湄公河流域'},{id:'rhine',name:'莱茵河流域'},{id:'amazon',name:'亚马孙河流域'},{id:'mississippi',name:'密西西比河流域'},{id:'congo',name:'刚果河流域'}];
