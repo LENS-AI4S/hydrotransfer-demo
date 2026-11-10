@@ -1,7 +1,7 @@
 /* Resources are fetched only for the workspace that needs them. Offline builds use the same API. */
 (() => {
   const inflight=new Map();
-  function url(name){return window.HYDRO_OFFLINE_FILES?.[name]||(name+'?v='+(window.HYDRO_RESOURCES?.build||'8'));}
+  function url(name){if(/^(data:|blob:)/.test(name))return name;return window.HYDRO_OFFLINE_FILES?.[name]||(name+'?v='+(window.HYDRO_RESOURCES?.build||'8'));}
   function script(name){
     if(inflight.has(name))return inflight.get(name);
     const promise=new Promise((resolve,reject)=>{
