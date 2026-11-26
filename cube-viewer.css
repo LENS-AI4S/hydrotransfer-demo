@@ -6,3 +6,7 @@
 .cube-time-window{margin:0 24px 13px;color:#727d89;font-size:12px;line-height:1.7}.cube-layer-options input:disabled{opacity:.45}.cube-layer-options label:has(input:disabled){color:#929ba5}
 
 .cube-annual-controls input[type=range]{flex:1;min-width:130px;accent-color:#15766c}.cube-annual-controls output{font-weight:700;min-width:62px}.cube-year-track{padding:0 18px 10px}.cube-year-track button{cursor:pointer}.cube-sheet.selected span{font-weight:700;background:#124e46;color:#fff}
+
+.cube-variable:disabled{opacity:.42;cursor:not-allowed;}
+
+.cube-variable:disabled{opacity:.42;cursor:not-allowed;}
