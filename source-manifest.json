@@ -308,7 +308,7 @@
   "assets/rivers-global.js": "ce443ac7593b63fb6e2c394dcad187f9cf34bfe7c0b60f6789e24e7ea0b29f02",
   "assets/topojson-client.min.js": "25cd02ae486cc5063e0215a4e4cfb15de83700c87ac48bac4d57dc6aaf3ebb89",
   "cube-viewer.css": "92762921b32f7073e13544fa3154b7154a6df6a8a45b67b6abd6502e70aa41b0",
-  "cube-viewer.js": "e193ea1554d55584b8c0d65d9bf38e724c64203b6f3dd3d93a95897fe40c1449",
+  "cube-viewer.js": "57442b1c08e62469281dcdaed5b4b8fdcccb795319824437c5d23edf8778972b",
   "detail-views.js": "bb63823e1c9910e4620c9537a247b18286dfc4bbc54f28a15cecde35b21e6e73",
   "global-results.css": "65d8f9e26aaee1abcbda88ec647b955c0e24f2f8ba8107400cee3472a93f9cd3",
   "global-results.js": "df0c40983f714fa77f634a519ad3a46f6cd6604ef589bbc4b92e4350d688cf02",
@@ -532,7 +532,7 @@
   "assets/cube-expanded/2080392590.json": "d4befb087ff40936d4fe0f33d29b7c218b18e6c02aa5e727dfcedc6822f8d1b3",
   "assets/cube-expanded/5080248880.json": "931dbd6eb55ee07515f4a5d778f522cc4d1f6eeb4e1fca805b1dbbbbc50eb428",
   "assets/cube-expanded/5080012410.json": "1e468ec568ab9f95ec4b4e5756c4ab228ada715d3b3cbdad32819b47674b88f4",
-  "docs/CUBE_EXPANSION_20261126.md": "cf1aeb8aa432656db2fdb3a1403d84c7faafd9decbe0cab7a6de3eca446ee98d",
+  "docs/CUBE_EXPANSION_20261126.md": "3355a63185565b6ae249e7ecba6901227d91aea8190b5a8d6e5212568818732e",
   "assets/cube-expanded/1080048550.json": "d316b4b8bfcc8eff471c737b772dcce7f8332b8bc95b6e0e2f077049a674fba8",
   "assets/cube-expanded/6080736450.json": "0a902e4325252727a553f64092f0c8f38984e76f495759d86610e3d09acd9dda",
   "assets/cube-expanded/1080234980.json": "2373e8c6d090ad9653e898eb83cb7f34cdb8ee24e84b30914c392132e7de07e5"
